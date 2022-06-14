@@ -7,3 +7,12 @@ sck = sck
 sda/sdi = mosi
 thats all for spi, it is used only to send data(what data can we even get from display?)
 other are used to chose modes
+my pinout looks like:
+3V	VCC
+GND	GND
+PA4	CS
+PA2	RESET
+PA3	DC
+PA7	SDI (MOSI)
+PA5	SCK	
+3V LED
