@@ -61,22 +61,17 @@ void TFT9341_reset(void)
 
 static void TFT9341_SetAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-  // column address set
-  TFT9341_SendCommand(0x2A); // CASET
+  TFT9341_SendCommand(0x2A);
   {
     uint8_t data[] = { (x0 >> 8) & 0xFF, x0 & 0xFF, (x1 >> 8) & 0xFF, x1 & 0xFF };
     TFT9341_WriteData(data, sizeof(data));
   }
-
-  // row address set
-  TFT9341_SendCommand(0x2B); // RASET
+  TFT9341_SendCommand(0x2B);
   {
     uint8_t data[] = { (y0 >> 8) & 0xFF, y0 & 0xFF, (y1 >> 8) & 0xFF, y1 & 0xFF };
     TFT9341_WriteData(data, sizeof(data));
   }
-
-  // write to RAM
-  TFT9341_SendCommand(0x2C); // RAMWR
+  TFT9341_SendCommand(0x2C);
 }
 
 void TFT9341_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
