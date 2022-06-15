@@ -212,12 +212,25 @@ void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
 	TFT9341_FillRect(x, y, x, y, color);
 }
 
-void TFT9341_DrawMassive128x128(uint16_t mimage[16384]){
+void TFT9341_DrawMassive128x128(uint16_t mimage[16384], uint16_t orientation){
 	uint16_t currcolnum = 0;
 	uint16_t x = 0;
 	for(uint16_t y = 0; y != TFT9341_HEIGHT;y++){
 		for(; x != TFT9341_HEIGHT;x++){
-			TFT9341_DrawPixel(y, x, mimage[currcolnum]);
+			switch(orientation){
+			case 0:
+				TFT9341_DrawPixel(TFT9341_WIDTH-x, y, mimage[currcolnum]);
+				break;
+			case 1:
+				TFT9341_DrawPixel(y, x, mimage[currcolnum]);
+				break;
+			case 2:
+				TFT9341_DrawPixel(TFT9341_WIDTH-y, TFT9341_HEIGHT-x, mimage[currcolnum]);
+				break;
+			case 3:
+				TFT9341_DrawPixel(x, TFT9341_HEIGHT-y, mimage[currcolnum]);
+				break;
+			}
 			currcolnum++;
 		}
 		x = 0;
