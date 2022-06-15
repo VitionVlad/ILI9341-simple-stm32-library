@@ -207,3 +207,7 @@ void TFT9341_FillScreen(uint16_t color)
 {
   TFT9341_FillRect(0, 0, TFT9341_WIDTH-1, TFT9341_HEIGHT-1, color);
 }
+
+void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
+	TFT9341_FillRect(x, y, x, y, color);
+}
