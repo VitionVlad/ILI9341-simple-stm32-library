@@ -217,7 +217,7 @@ void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
 }
 
 
-void TFT9341_DrawMassive128x128(uint16_t mimage[16384], uint16_t orientation){
+void TFT9341_DrawMassive(uint16_t *mimage, uint16_t orientation){
 	uint16_t currcolnum = 0;
 	uint16_t x = 0;
 	for(uint16_t y = 0; y != TFT9341_HEIGHT;y++){
