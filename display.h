@@ -209,8 +209,12 @@ void TFT9341_FillScreen(uint16_t color)
 }
 
 void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
-	TFT9341_FillRect(x, y, x, y, color);
+	TFT9341_SetAddrWindow(x, y, x, y);
+	uint8_t data[] = { color >> 8, color & 0xFF };
+	DC_DATA();
+	HAL_SPI_Transmit(&hspi1, data, 2, 0);
 }
+
 
 void TFT9341_DrawMassive128x128(uint16_t mimage[16384], uint16_t orientation){
 	uint16_t currcolnum = 0;
