@@ -1,6 +1,7 @@
-#include "stm32f4xx_hal.h"
-
 extern SPI_HandleTypeDef hspi1;
+
+uint16_t TFT9341_WIDTH;
+uint16_t TFT9341_HEIGHT;
 
 #define RESET_ACTIVE() HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2,GPIO_PIN_RESET)
 #define RESET_IDLE() HAL_GPIO_WritePin(GPIOA,GPIO_PIN_2,GPIO_PIN_SET)
