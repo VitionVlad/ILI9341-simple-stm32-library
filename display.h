@@ -60,19 +60,19 @@ void TFT9341_reset(void)
 	RESET_IDLE();
 }
 
-static void TFT9341_SetAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+void TFT9341_SetAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-  TFT9341_SendCommand(0x2A);
-  {
-    uint8_t data[] = { (x0 >> 8) & 0xFF, x0 & 0xFF, (x1 >> 8) & 0xFF, x1 & 0xFF };
-    TFT9341_WriteData(data, sizeof(data));
-  }
-  TFT9341_SendCommand(0x2B);
-  {
-    uint8_t data[] = { (y0 >> 8) & 0xFF, y0 & 0xFF, (y1 >> 8) & 0xFF, y1 & 0xFF };
-    TFT9341_WriteData(data, sizeof(data));
-  }
-  TFT9341_SendCommand(0x2C);
+	TFT9341_SendCommand(0x2A);
+	TFT9341_SendData(x0>>8);
+	TFT9341_SendData(x0);
+	TFT9341_SendData(x1>>8);
+	TFT9341_SendData(x1);
+	TFT9341_SendCommand(0x2B);
+	TFT9341_SendData(y0>>8);
+	TFT9341_SendData(y0);
+	TFT9341_SendData(y1>>8);
+	TFT9341_SendData(y1);
+	TFT9341_SendCommand(0x2C);
 }
 
 void TFT9341_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
@@ -210,7 +210,13 @@ void TFT9341_FillScreen(uint16_t color)
 }
 
 void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
-	TFT9341_SetAddrWindow(x,y,x,y);
+	TFT9341_SendCommand(0x2A);
+	TFT9341_SendData(x>>8);
+	TFT9341_SendData(x);
+	TFT9341_SendCommand(0x2B);
+	TFT9341_SendData(y>>8);
+	TFT9341_SendData(y);
+	TFT9341_SendCommand(0x2C);
 	TFT9341_SendCommand(0x2C);
 	TFT9341_SendData(color>>8);
 	TFT9341_SendData(color & 0xFF);
