@@ -1,4 +1,3 @@
-extern SPI_HandleTypeDef hspi1;
 
 uint16_t TFT9341_WIDTH;
 uint16_t TFT9341_HEIGHT;
@@ -215,7 +214,6 @@ void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
 	TFT9341_SendCommand(0x2B);
 	TFT9341_SendData(y>>8);
 	TFT9341_SendData(y);
-	TFT9341_SendCommand(0x2C);
 	TFT9341_SendCommand(0x2C);
 	TFT9341_SendData(color>>8);
 	TFT9341_SendData(color & 0xFF);
