@@ -34,22 +34,19 @@ uint16_t TFT9341_HEIGHT;
 void TFT9341_SendCommand(uint8_t cmd)
 {
   DC_COMMAND();
-  HAL_SPI_Transmit (&hspi1, &cmd, 1, 5000);
+  LL_SPI_TransmitData8(SPI1, cmd);
 }
 
 void TFT9341_SendData(uint8_t dt)
 {
 	DC_DATA();
-	HAL_SPI_Transmit (&hspi1, &dt, 1, 5000);
+	LL_SPI_TransmitData8(SPI1, dt);
 }
 
-static void TFT9341_WriteData(uint8_t* buff, size_t buff_size) {
+static void TFT9341_WriteData(uint8_t *buff, size_t buff_size) {
 	DC_DATA();
-	while(buff_size > 0) {
-		uint16_t chunk_size = buff_size > 32768 ? 32768 : buff_size;
-		HAL_SPI_Transmit(&hspi1, buff, chunk_size, HAL_MAX_DELAY);
-		buff += chunk_size;
-		buff_size -= chunk_size;
+	for(uint16_t i = 0; i!=buff_size; i++){
+		LL_SPI_TransmitData8(SPI1, buff[i]);
 	}
 }
 
@@ -85,11 +82,13 @@ void TFT9341_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16
   DC_DATA();
   for(uint32_t i = 0; i < (x2-x1+1)*(y2-y1+1); i++)
   {
-      HAL_SPI_Transmit(&hspi1, data, 2, HAL_MAX_DELAY);
+	  LL_SPI_TransmitData8(SPI1, data[0]);
+	  LL_SPI_TransmitData8(SPI1, data[1]);
   }
 }
 
 void TFT9341_ini(uint16_t w_size, uint16_t h_size){
+	SET_BIT(SPI1->CR1, SPI_CR1_SPE);
 	uint8_t data[15];
 	CS_ACTIVE();
 	TFT9341_reset();
