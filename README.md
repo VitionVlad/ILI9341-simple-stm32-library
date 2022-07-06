@@ -1,7 +1,16 @@
-# ILI9341-simple-stm32-library
-simple library for ili9341 and stm32  
-it just have init function, some functions to send data, and to draw pixels  
-Use HAL  
+# ILI9341-simple-stm32-library   
+#Usage  
+#Step 1  
+activate spi1, and dma in circular mode, use HAL  
+#Step 2  
+Copy display.h to Inc folder  
+#Step 3  
+include it in main.c (or other file) after creating spi handle and spi dma handle  
+#Step4  
+Init display, and draw what you need  
+#How it works?  
+my idea is that this driver, allow me to set color of every pixel i need, in my work area. That means that i can create an image (framebuffer), send it via dma in Circular mode, set working arrea on fullscreen, and finnaly, just modify framebuffer, to draw.  
+Yes, i just put display handling on dma  
 my pinout looks like:  
   
 3V	VCC
