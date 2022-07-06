@@ -11,7 +11,7 @@ Init display, and draw what you need
 # How it works?  
 my idea is that this driver, allow me to set color of every pixel i need, in my work area. That means that i can create an image (framebuffer), send it via dma in Circular mode, set working arrea on fullscreen, and finnaly, just modify framebuffer, to draw.  
 Yes, i just put display handling on dma  
-my pinout looks like:  
+# Pinout
   
 3V	VCC
   
