@@ -27,29 +27,24 @@ uint16_t TFT9341_HEIGHT;
 #define TFT9341_YELLOW  0xFFE0
 #define TFT9341_WHITE   0xFFFF
 
-#define swap(a,b) {int16_t t=a;a=b;b=t;}
-
-void Transmit8bit(SPI_HandleTypeDef *hspi, uint8_t *cmd){
-	*((__IO uint8_t *)&hspi->Instance->DR) = (*(uint8_t *)cmd);
-}
+uint8_t FrameBuffer[32768] = {0};
 
 void TFT9341_SendCommand(uint8_t cmd)
 {
   DC_COMMAND();
-  Transmit8bit(&hspi1, &cmd);
+  HAL_SPI_Transmit(&hspi1, &cmd, 1, 1);
 }
 
 void TFT9341_SendData(uint8_t dt)
 {
 	DC_DATA();
 	HAL_SPI_Transmit(&hspi1, &dt, 1, 1);
-	Transmit8bit(&hspi1, &dt);
 }
 
 static void TFT9341_WriteData(uint8_t *buff, size_t buff_size) {
 	DC_DATA();
 	for(uint16_t i = 0; i!=buff_size; i++){
-		Transmit8bit(&hspi1, &buff[i]);
+		HAL_SPI_Transmit(&hspi1, &buff[i], 1, 1);
 	}
 }
 
@@ -76,7 +71,6 @@ void TFT9341_SetAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 }
 
 void TFT9341_ini(uint16_t w_size, uint16_t h_size){
-	__HAL_SPI_ENABLE(&hspi1);
 	uint8_t data[15];
 	CS_ACTIVE();
 	TFT9341_reset();
@@ -191,40 +185,21 @@ void TFT9341_ini(uint16_t w_size, uint16_t h_size){
 	  TFT9341_HEIGHT = h_size;
 }
 
-void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
-	TFT9341_SendCommand(0x2A);
-	TFT9341_SendData(x>>8);
-	TFT9341_SendData(x);
-	TFT9341_SendCommand(0x2B);
-	TFT9341_SendData(y>>8);
-	TFT9341_SendData(y);
-	TFT9341_SendCommand(0x2C);
-	TFT9341_SendData(color>>8);
-	TFT9341_SendData(color & 0xFF);
+void TFT9341_FillScreen(uint16_t color){
+	for(uint32_t len = 2; len!=32768;len+=2){
+		FrameBuffer[len] = color >> 8;
+		FrameBuffer[len-1] = color & 0xFF;
+	}
 }
 
+void TFT9341_BeginDraw(){
+	TFT9341_SetAddrWindow(0, 0, TFT9341_WIDTH-1, TFT9341_HEIGHT-1);
+	DC_DATA();
+	HAL_SPI_Transmit_DMA(&hspi1, FrameBuffer, 32768);
+}
 
-void TFT9341_DrawMassive(uint16_t *mimage, uint16_t orientation){
-	uint16_t currcolnum = 0;
-	uint16_t x = 0;
-	for(uint16_t y = 0; y != TFT9341_HEIGHT;y++){
-		for(; x != TFT9341_HEIGHT;x++){
-			switch(orientation){
-			case 0:
-				TFT9341_DrawPixel(TFT9341_WIDTH-x, y, mimage[currcolnum]);
-				break;
-			case 1:
-				TFT9341_DrawPixel(y, x, mimage[currcolnum]);
-				break;
-			case 2:
-				TFT9341_DrawPixel(TFT9341_WIDTH-y, TFT9341_HEIGHT-x, mimage[currcolnum]);
-				break;
-			case 3:
-				TFT9341_DrawPixel(x, TFT9341_HEIGHT-y, mimage[currcolnum]);
-				break;
-			}
-			currcolnum++;
-		}
-		x = 0;
-	}
+void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
+	uint32_t addres = (128*y+x)*2;
+	FrameBuffer[addres] = color >> 8;
+	FrameBuffer[addres-1] = color & 0xFF;
 }
