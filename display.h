@@ -70,6 +70,12 @@ void TFT9341_SetAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 	TFT9341_SendCommand(0x2C);
 }
 
+void TFT9341_BeginDraw(){
+	TFT9341_SetAddrWindow(0, 0, TFT9341_WIDTH-1, TFT9341_HEIGHT-1);
+	DC_DATA();
+	HAL_SPI_Transmit_DMA(&hspi1, FrameBuffer, 32768);
+}
+
 void TFT9341_ini(uint16_t w_size, uint16_t h_size){
 	uint8_t data[15];
 	CS_ACTIVE();
@@ -183,6 +189,7 @@ void TFT9341_ini(uint16_t w_size, uint16_t h_size){
 	  TFT9341_WriteData(data, 1);
 	  TFT9341_WIDTH = w_size;
 	  TFT9341_HEIGHT = h_size;
+	  TFT9341_BeginDraw();
 }
 
 void TFT9341_FillScreen(uint16_t color){
@@ -190,12 +197,6 @@ void TFT9341_FillScreen(uint16_t color){
 		FrameBuffer[len] = color >> 8;
 		FrameBuffer[len-1] = color & 0xFF;
 	}
-}
-
-void TFT9341_BeginDraw(){
-	TFT9341_SetAddrWindow(0, 0, TFT9341_WIDTH-1, TFT9341_HEIGHT-1);
-	DC_DATA();
-	HAL_SPI_Transmit_DMA(&hspi1, FrameBuffer, 32768);
 }
 
 void TFT9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color){
